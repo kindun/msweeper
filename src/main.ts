@@ -1,60 +1,57 @@
 import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+const ROWS:number = 10
+const COLS:number = 10
+const MINES:number = 10
 
-<div class="ticks"></div>
+interface Cell {
+  row: number
+  col: number
+  isMine: boolean
+  isOpen: boolean
+  isFlagged: boolean
+  adjacentMines: number
+}
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+function placeMines(mines: number): Set<string>{
+  const mineSet = new Set<string>()
+  for (let i = 0; i < mines; i++) {
+    const r = Math.floor(Math.random() * ROWS)
+    const c = Math.floor(Math.random() * COLS)
+    mineSet.add(`${r},${c}`)
+  }
+  return mineSet
+}
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+type Board = Cell[][];
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const board: Board = []
+const table = document.createElement('table')
+const mineSet: Set<string> = placeMines(MINES)
+
+for (let r = 0; r < ROWS; r++) {
+  const tr = document.createElement('tr')
+  board[r] = []
+  for (let c = 0; c < COLS; c++) {
+    const td = document.createElement('td')
+    tr.appendChild(td)
+    board[r][c] = {
+      row: r, 
+      col: c, 
+      isFlagged: false,
+      isMine: false,
+      isOpen: false,
+      adjacentMines: 0
+    }
+    if (mineSet.has(`${r},${c}`)) {
+      board[r][c].isMine = true
+      td.style.backgroundColor = `red`
+    }
+    td.addEventListener("click", () => alert(JSON.stringify(board[r][c])))
+  }
+  table.appendChild(tr)
+}
+
+document.body.appendChild(table)
+
+

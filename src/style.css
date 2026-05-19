@@ -161,7 +161,7 @@ code {
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
+  /*border-inline: 1px solid var(--border);*/
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -293,4 +293,16 @@ code {
     right: 0;
     border-right-color: var(--border);
   }
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  text-align: center;
+  vertical-align: middle;
 }
