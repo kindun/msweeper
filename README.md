@@ -1,3 +1,13 @@
-# setup
-npm create vite@latest /path/to/folder
+# Minesweeper
 
+ブラウザで動くマインスイーパー。
+
+## 機能
+- ページをロードするたびに爆弾の位置がランダムに配置される
+- 各セルに周囲の爆弾の数を表示
+
+## 使用技術
+- TypeScript
+- HTML
+- CSS
+- Vite
