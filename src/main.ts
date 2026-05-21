@@ -70,6 +70,7 @@ function createGrid() {
         if (isStarted) {
           isStarted = false
           startGame(r, c)
+          openCell(r, c)
           return
         }
       })
@@ -93,10 +94,36 @@ function startGame(r: number, c: number) {
               board[r][c].adjacentMines++
             }
           }
-          /* 以下のプログラムを具体的に制御する */
-          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
         }
       }
+      if (!board[r][c].isMine) {
+        tdGrid[r][c].addEventListener('click', () => {
+          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+        })
+      } else {
+        tdGrid[r][c].addEventListener('click', () => {
+          alert('Bomm!!')
+        })
+      }
+    }
+  }
+}
+
+function openCell(r: number, c: number) {
+  if (!board[r][c].isOpen) {
+    tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+  } else {
+    return
+  }
+  board[r][c].isOpen = true
+  if (board[r][c].adjacentMines == 0 && !board[r][c].isMine) {
+    for (const [dr, dc] of direction) {
+      const nr = r + dr
+      const nc = c + dc
+      if (0 <= nr && nr < ROWS && 0 <= nc && nc < COLS) {
+        openCell(nr, nc)
+      }
+      //tdGrid[nr][nc].textContent = String(board[nr][nc].adjacentMines)
     }
   }
 }
