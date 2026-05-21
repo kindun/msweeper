@@ -32,10 +32,12 @@ let isStarted: boolean = true
 
 function placeMines(mines: number, click_r: number, click_c: number) {
   const mineSet = new Set<string>()
-  outer: for (let i = 0; i < mines; i++) {
+  let i = 0
+  outer: while (i < mines) {
     const r = Math.floor(Math.random() * ROWS)
     const c = Math.floor(Math.random() * COLS)
     if (r == click_r && c == click_c) continue outer
+    if (mineSet.has(`${r},${c}`)) continue outer
     for (const [dr, dc] of direction) {
       /* クリックしたセルの周囲はmineにしない*/
       const nr = click_r + dr
@@ -45,6 +47,9 @@ function placeMines(mines: number, click_r: number, click_c: number) {
     mineSet.add(`${r},${c}`)
     board[r][c].isMine = true
     tdGrid[r][c].style.backgroundColor = `red`
+
+    if (mineSet.size >= ROWS * COLS - 9) break
+    i++
   }
 }
 
