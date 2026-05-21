@@ -1,10 +1,5 @@
 import './style.css'
 
-const ROWS: number = 10
-const COLS: number = 10
-const MINES: number = 10
-let isStarted: boolean = true
-
 interface Cell {
   row: number
   col: number
@@ -14,12 +9,21 @@ interface Cell {
   adjacentMines: number
 }
 
+type Board = Cell[][];
+
+const ROWS: number = 10
+const COLS: number = 10
+const MINES: number = 10
+const board: Board = []
+const table = document.createElement('table')
+const tdGrid: HTMLTableCellElement[][] = []
 const direction: [number, number][] = [
   [-1, -1], [-1, 0], [-1, 1],
   [0, -1],           [0, 1],
   [1, -1], [1, 0], [1, 1]
 ]
 
+let isStarted: boolean = true
 
 function placeMines(mines: number, click_r: number, click_c: number) {
   const mineSet = new Set<string>()
@@ -38,12 +42,6 @@ function placeMines(mines: number, click_r: number, click_c: number) {
     tdGrid[r][c].style.backgroundColor = `red`
   }
 }
-
-type Board = Cell[][];
-
-const board: Board = []
-const table = document.createElement('table')
-const tdGrid: HTMLTableCellElement[][] = []
 
 function createGrid() {
   for (let r = 0; r < ROWS; r++) {
@@ -75,8 +73,6 @@ function createGrid() {
   }
 }
 
-createGrid()
-
 function startGame(r: number, c: number) {
   placeMines(MINES, r, c)
 
@@ -98,6 +94,8 @@ function startGame(r: number, c: number) {
     }
   }
 }
+
+createGrid()
 
 
 document.body.appendChild(table)
