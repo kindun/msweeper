@@ -9,7 +9,7 @@ interface Cell {
   adjacentMines: number
 }
 
-type Board = Cell[][];
+type Board = Cell[][]
 
 const ROWS: number = 10
 const COLS: number = 10
@@ -18,9 +18,14 @@ const board: Board = []
 const table = document.createElement('table')
 const tdGrid: HTMLTableCellElement[][] = []
 const direction: [number, number][] = [
-  [-1, -1], [-1, 0], [-1, 1],
-  [0, -1],           [0, 1],
-  [1, -1], [1, 0], [1, 1]
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
 ]
 
 let isStarted: boolean = true
@@ -58,10 +63,10 @@ function createGrid() {
         isFlagged: false,
         isMine: false,
         isOpen: false,
-        adjacentMines: 0
+        adjacentMines: 0,
       }
       //td.addEventListener("click", () => alert(JSON.stringify(board[r][c])))
-      td.addEventListener("click", () => {
+      td.addEventListener('click', () => {
         if (isStarted) {
           isStarted = false
           startGame(r, c)
@@ -88,7 +93,8 @@ function startGame(r: number, c: number) {
               board[r][c].adjacentMines++
             }
           }
-          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)          
+          /* 以下のプログラムを具体的に制御する */
+          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
         }
       }
     }
@@ -97,7 +103,4 @@ function startGame(r: number, c: number) {
 
 createGrid()
 
-
 document.body.appendChild(table)
-
-
