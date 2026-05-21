@@ -32,10 +32,12 @@ let isStarted: boolean = true
 
 function placeMines(mines: number, click_r: number, click_c: number) {
   const mineSet = new Set<string>()
-  outer: for (let i = 0; i < mines; i++) {
+  let i = 0
+  outer: while (i < mines) {
     const r = Math.floor(Math.random() * ROWS)
     const c = Math.floor(Math.random() * COLS)
     if (r == click_r && c == click_c) continue outer
+    if (mineSet.has(`${r},${c}`)) continue outer
     for (const [dr, dc] of direction) {
       /* クリックしたセルの周囲はmineにしない*/
       const nr = click_r + dr
@@ -45,6 +47,9 @@ function placeMines(mines: number, click_r: number, click_c: number) {
     mineSet.add(`${r},${c}`)
     board[r][c].isMine = true
     tdGrid[r][c].style.backgroundColor = `red`
+
+    if (mineSet.size >= ROWS * COLS - 9) break
+    i++
   }
 }
 
@@ -70,6 +75,7 @@ function createGrid() {
         if (isStarted) {
           isStarted = false
           startGame(r, c)
+          openCell(r, c)
           return
         }
       })
@@ -93,10 +99,36 @@ function startGame(r: number, c: number) {
               board[r][c].adjacentMines++
             }
           }
-          /* 以下のプログラムを具体的に制御する */
-          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
         }
       }
+      if (!board[r][c].isMine) {
+        tdGrid[r][c].addEventListener('click', () => {
+          tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+        })
+      } else {
+        tdGrid[r][c].addEventListener('click', () => {
+          alert('Bomm!!')
+        })
+      }
+    }
+  }
+}
+
+function openCell(r: number, c: number) {
+  if (!board[r][c].isOpen) {
+    tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+  } else {
+    return
+  }
+  board[r][c].isOpen = true
+  if (board[r][c].adjacentMines == 0 && !board[r][c].isMine) {
+    for (const [dr, dc] of direction) {
+      const nr = r + dr
+      const nc = c + dc
+      if (0 <= nr && nr < ROWS && 0 <= nc && nc < COLS) {
+        openCell(nr, nc)
+      }
+      //tdGrid[nr][nc].textContent = String(board[nr][nc].adjacentMines)
     }
   }
 }
