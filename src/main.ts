@@ -106,6 +106,7 @@ function startGame(r: number, c: number) {
             openCell(r, c)
           } else {
             tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+            tdGrid[r][c].style.backgroundColor = `lightgray`
           }
         })
       } else {
@@ -118,11 +119,11 @@ function startGame(r: number, c: number) {
 }
 
 function openCell(r: number, c: number) {
+  tdGrid[r][c].style.backgroundColor = `lightgray`
   if (!board[r][c].isOpen) {
     if (board[r][c].adjacentMines != 0) {
       tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
     }
-    tdGrid[r][c].style.backgroundColor = `lightgray`
   } else {
     return
   }
