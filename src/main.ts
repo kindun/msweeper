@@ -46,7 +46,7 @@ function placeMines(mines: number, click_r: number, click_c: number) {
     }
     mineSet.add(`${r},${c}`)
     board[r][c].isMine = true
-    tdGrid[r][c].style.backgroundColor = `red`
+    // tdGrid[r][c].style.backgroundColor = `red`
     if (mineSet.size >= ROWS * COLS - 9) break
     i++
   }
@@ -111,7 +111,8 @@ function startGame(r: number, c: number) {
         })
       } else {
         tdGrid[r][c].addEventListener('click', () => {
-          alert('Bomm!!')
+          // alert('Bomm!!')
+          tdGrid[r][c].textContent = '💣'
         })
       }
     }
@@ -119,8 +120,8 @@ function startGame(r: number, c: number) {
 }
 
 function openCell(r: number, c: number) {
-  tdGrid[r][c].style.backgroundColor = `lightgray`
   if (!board[r][c].isOpen) {
+    tdGrid[r][c].style.backgroundColor = `lightgray`
     if (board[r][c].adjacentMines != 0) {
       tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
     }
@@ -135,7 +136,6 @@ function openCell(r: number, c: number) {
       if (0 <= nr && nr < ROWS && 0 <= nc && nc < COLS) {
         openCell(nr, nc)
       }
-      //tdGrid[nr][nc].textContent = String(board[nr][nc].adjacentMines)
     }
   }
 }
