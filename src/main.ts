@@ -30,6 +30,25 @@ const direction: [number, number][] = [
 
 let isStarted: boolean = true
 
+const makeFlag = (r: number, c: number, event: KeyboardEvent) => {
+  if (event.repeat) {
+    // 長押しの禁止
+    event.preventDefault()
+    return
+  }
+  if (event.key === 'f' || event.key === 'F') {
+    if (!board[r][c].isOpen || !board[r][c].isMine) {
+      if (!board[r][c].isFlagged) {
+        tdGrid[r][c].textContent = '🚩'
+        board[r][c].isFlagged = !board[r][c].isFlagged
+      } else {
+        tdGrid[r][c].textContent = ''
+        board[r][c].isFlagged = !board[r][c].isFlagged
+      }
+    }
+  }
+}
+
 function placeMines(mines: number, click_r: number, click_c: number) {
   const mineSet = new Set<string>()
   let i = 0
@@ -69,14 +88,36 @@ function createGrid() {
         isOpen: false,
         adjacentMines: 0,
       }
-      //td.addEventListener("click", () => alert(JSON.stringify(board[r][c])))
+      // td.addEventListener('click', () => alert(JSON.stringify(board[r][c])))
+
       td.addEventListener('click', () => {
         if (isStarted) {
-          isStarted = false
           startGame(r, c)
-          openCell(r, c)
-          return
+          isStarted = false
         }
+        if (!board[r][c].isFlagged) {
+          if (!board[r][c].isMine) {
+            openCell(r, c)
+          } else {
+            // alert('Bomm!!')
+            tdGrid[r][c].textContent = '💣'
+            board[r][c].isOpen = true
+          }
+        }
+      })
+
+      const handler = (event: KeyboardEvent) => makeFlag(r, c, event)
+      td.addEventListener('mouseenter', () => {
+        if (!board[r][c].isOpen) {
+          tdGrid[r][c].style.backgroundColor = 'white'
+          window.addEventListener('keydown', handler)
+        }
+      })
+      td.addEventListener('mouseleave', () => {
+        if (!board[r][c].isOpen) {
+          tdGrid[r][c].style.backgroundColor = 'lightblue'
+        }
+        window.removeEventListener('keydown', handler)
       })
     }
     table.appendChild(tr)
@@ -100,21 +141,6 @@ function startGame(r: number, c: number) {
           }
         }
       }
-      if (!board[r][c].isMine) {
-        tdGrid[r][c].addEventListener('click', () => {
-          if (board[r][c].adjacentMines == 0) {
-            openCell(r, c)
-          } else {
-            tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
-            tdGrid[r][c].style.backgroundColor = `lightgray`
-          }
-        })
-      } else {
-        tdGrid[r][c].addEventListener('click', () => {
-          // alert('Bomm!!')
-          tdGrid[r][c].textContent = '💣'
-        })
-      }
     }
   }
 }
@@ -124,6 +150,8 @@ function openCell(r: number, c: number) {
     tdGrid[r][c].style.backgroundColor = `lightgray`
     if (board[r][c].adjacentMines != 0) {
       tdGrid[r][c].textContent = String(board[r][c].adjacentMines)
+    } else {
+      tdGrid[r][c].textContent = ''
     }
   } else {
     return
