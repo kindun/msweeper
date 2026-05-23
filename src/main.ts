@@ -27,8 +27,27 @@ const direction: [number, number][] = [
   [1, 0],
   [1, 1],
 ]
+const controller = new AbortController()
 
 let isStarted: boolean = true
+
+const clickAction = (r: number, c: number) => {
+  if (isStarted) {
+    startGame(r, c)
+    isStarted = false
+  }
+  if (!board[r][c].isFlagged) {
+    if (!board[r][c].isMine) {
+      openCell(r, c)
+    } else {
+      // alert('Bomm!!')
+      tdGrid[r][c].textContent = '💣'
+      board[r][c].isOpen = true
+      gameFinish(0)
+    }
+  }
+  gameFinish(1)
+}
 
 const makeFlag = (r: number, c: number, event: KeyboardEvent) => {
   if (event.repeat) {
@@ -90,21 +109,8 @@ function createGrid() {
       }
       // td.addEventListener('click', () => alert(JSON.stringify(board[r][c])))
 
-      td.addEventListener('click', () => {
-        if (isStarted) {
-          startGame(r, c)
-          isStarted = false
-        }
-        if (!board[r][c].isFlagged) {
-          if (!board[r][c].isMine) {
-            openCell(r, c)
-          } else {
-            // alert('Bomm!!')
-            tdGrid[r][c].textContent = '💣'
-            board[r][c].isOpen = true
-          }
-        }
-      })
+      const clickHandler = () => clickAction(r, c)
+      td.addEventListener('click', clickHandler, { signal: controller.signal })
 
       const handler = (event: KeyboardEvent) => makeFlag(r, c, event)
       td.addEventListener('mouseenter', () => {
@@ -168,6 +174,29 @@ function openCell(r: number, c: number) {
   }
 }
 
+function gameFinish(status: number) {
+  let clear: boolean = true
+  if (status) {
+    for (let r = 0; r < ROWS; r++) {
+      var result = board[r].filter(({ isMine }) => isMine === false)
+      if (result.find(({ isOpen }) => isOpen === false) != undefined) {
+        clear = false
+        break
+      }
+    }
+    if (clear) {
+      alert('ゲームクリア！')
+      gameStop()
+    }
+  } else {
+    alert('ゲームオーバー')
+    gameStop()
+  }
+}
+
+function gameStop() {
+  controller.abort()
+}
 createGrid()
 
 document.body.appendChild(table)
