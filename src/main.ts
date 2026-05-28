@@ -177,6 +177,7 @@ function openCell(r: number, c: number) {
 function gameFinish(status: number) {
   let clear: boolean = true
   if (status) {
+    // ゲームを続けるかの判定
     for (let r = 0; r < ROWS; r++) {
       var result = board[r].filter(({ isMine }) => isMine === false)
       if (result.find(({ isOpen }) => isOpen === false) != undefined) {
@@ -196,6 +197,13 @@ function gameFinish(status: number) {
 
 function gameStop() {
   controller.abort()
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (board[r][c].isMine) {
+        tdGrid[r][c].textContent = '💣'
+      }
+    }
+  }
 }
 createGrid()
 
